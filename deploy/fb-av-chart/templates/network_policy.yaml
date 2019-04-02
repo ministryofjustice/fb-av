@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-user-filestore-to-access-av
+  namespace: formbuilder-platform-{{ .Values.environmentName }}
+spec:
+  podSelector:
+    matchLabels:
+      app: fb-av-{{ .Values.environmentName }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          name: fb-user-filestore-api-{{ .Values.environmentName }}
+    ports:
+    - protocol: TCP
+      port: 3310

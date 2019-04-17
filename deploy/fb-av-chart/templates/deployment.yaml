@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: "fb-av-{{ .Values.environmentName }}"
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -16,7 +16,7 @@ spec:
       serviceAccountName: "formbuilder-av-{{ .Values.environmentName }}"
       containers:
       - name: "fb-av-{{ .Values.environmentName }}"
-        image: "926803513772.dkr.ecr.eu-west-1.amazonaws.com/formbuilder/fb-av:latest-{{ .Values.platformEnv }}"
+        image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:latest-{{ .Values.platformEnv }}"
         imagePullPolicy: Always
         resources:
           requests:

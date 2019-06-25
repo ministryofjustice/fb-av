@@ -16,7 +16,7 @@ spec:
       serviceAccountName: "formbuilder-av-{{ .Values.environmentName }}"
       containers:
       - name: "fb-av-{{ .Values.environmentName }}"
-        image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:latest-{{ .Values.platformEnv }}"
+        image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:{{ .Values.circleSha1 }}"
         imagePullPolicy: Always
         resources:
           requests:

@@ -6,3 +6,5 @@ update_configs:
     update_schedule: "daily"
     default_reviewers:
     - asmega
+    - tomas-stefano
+    - brenetic

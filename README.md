@@ -25,7 +25,7 @@ copied from https://github.com/mko-x/docker-clamav
 ## Run Locally
 `docker run -p 3310:3310 [image reference]`
 
-*use fb-user-filestore to test*
+*From inside root of fb-user-filestore.*
 
 Test a file - okay
 

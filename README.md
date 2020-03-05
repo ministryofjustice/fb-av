@@ -22,8 +22,22 @@ TCPAddr localhost # or wherever you setup this container
 
 copied from https://github.com/mko-x/docker-clamav
 
+## Run Locally
+`docker run -p 3310:3310 [image reference]`
+
+*use fb-user-filestore to test*
+
+Test a file - okay
+
+`clamdscan -c config/clamd/development.conf --stream --no-summary README.md`
+
+Test downloaded (file downloaded from [eicar.org](https://www.eicar.org/)) - virus found
+
+`clamdscan -c config/clamd/development.conf --stream --no-summary ~/Downloads/eicar.com.txt`
+
 ## Deployment
 
 Continuous Integration (CI) is enabled on this project via CircleCI.
 
 On merge to master tests are executed and if green deployed to the test environment. This build can then be promoted to production
+

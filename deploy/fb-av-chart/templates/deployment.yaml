@@ -1,10 +1,13 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "fb-av-{{ .Values.environmentName }}"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: "fb-av-{{ .Values.environmentName }}"
   template:
     metadata:
       labels:

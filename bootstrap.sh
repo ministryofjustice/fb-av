@@ -8,6 +8,8 @@ set -m
 freshclam -d &
 clamd &
 
+# service cron start &
+
 # recognize PIDs
 pidlist=`jobs -p`
 

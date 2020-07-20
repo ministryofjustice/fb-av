@@ -2,7 +2,7 @@ require 'date'
 require 'sentry-raven'
 
 Raven.configure do |config|
-  config.dsn = ''
+  config.dsn = ENV.fetch('SENTRY_DSN')
 end
 
 BYTECODE = 'bytecode.cvd database is up to date'.freeze

@@ -1,35 +1,46 @@
 require 'date'
 require 'sentry-raven'
+require 'rufus-scheduler'
+require 'logger'
+
+logger = Logger.new('/var/log/clamav/clamav_check.log')
 
 Raven.configure do |config|
   config.dsn = ENV.fetch('SENTRY_DSN')
 end
 
-BYTECODE = 'bytecode.cvd database is up to date'.freeze
-DAILY = 'daily.cvd database is up to date'.freeze
-MAIN = 'main.cvd database is up to date'.freeze
+FRESHCLAM_LOG_FILE = '/var/log/clamav/freshclam.log'.freeze
+BYTECODE = /bytecode.cvd (database is up to date|updated)/.freeze
+DAILY = /daily.cld (database is up to date|updated)/.freeze
+MAIN = /main.cvd (database is up to date|updated)/.freeze
 
-today = Date.today.strftime("%a %b %d")
+scheduler = Rufus::Scheduler.new
 
-todays_log_lines = File.read('/var/log/clamav/freshclam.log')
-                       .split("\n")
-                       .select { |line| line.include?(today) }
+scheduler.cron '30 15 * * *' do
+  logger.info('Starting check')
 
+  today = Date.today.strftime("%a %b %d")
+  begin
+    todays_log_lines = File.read(FRESHCLAM_LOG_FILE)
+                           .split("\n")
+                           .select { |line| line.include?(today) }
 
-begin
-  raise(StandardError, 'THIS WORKS')
-  unless todays_log_lines.find { |line| line.include?(BYTECODE) }
-    raise(StandardError, 'Bytecode database failed to update')
+    unless todays_log_lines.find { |line| line.match(BYTECODE) }
+      raise(StandardError, "Bytecode database failed to update -> #{Time.now}")
+    end
+
+    unless todays_log_lines.find { |line| line.match(DAILY) }
+      raise(StandardError, "Daily database failed to update -> #{Time.now}")
+    end
+
+    unless todays_log_lines.find { |line| line.match(MAIN) }
+      raise(StandardError, "Main database failed to update -> #{Time.now}")
+    end
+
+    logger.info('Everything is up to date')
+  rescue StandardError => e
+    Raven.capture_exception(e)
   end
-
-  unless todays_log_lines.find { |line| line.include?(DAILY) }
-    raise(StandardError, 'Daily database failed to update')
-  end
-
-  unless todays_log_lines.find { |line| line.include?(MAIN) }
-    raise(StandardError, 'Main database failed to update')
-  end
-rescue StandardError => e
-  Raven.capture_exception(e)
 end
 
+scheduler.join

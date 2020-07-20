@@ -8,7 +8,8 @@ set -m
 freshclam -d &
 clamd &
 
-# service cron start &
+# start clamav update checker
+ruby clamav_check.rb &
 
 # recognize PIDs
 pidlist=`jobs -p`

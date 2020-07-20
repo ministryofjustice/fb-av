@@ -8,8 +8,10 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
     echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION-updates main contrib non-free" >> /etc/apt/sources.list && \
     echo "deb http://security.debian.org/ $DEBIAN_VERSION/updates main contrib non-free" >> /etc/apt/sources.list && \
     apt-get update && \
+    apt-get upgrade && \
     apt-get install ruby-full -y && \
     gem install sentry-raven && \
+    gem install rufus-scheduler && \
     apt-get install -y ca-certificates && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -qq \
         clamav \
@@ -37,7 +39,6 @@ RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
 
 # monitor clamav updates
 ADD scripts/clamav_check.rb /
-COPY scripts/clamav_check_cron /etc/cron.d/clamav_check_cron
 
 # volume provision
 VOLUME ["/var/lib/clamav"]
@@ -46,8 +47,6 @@ VOLUME ["/var/lib/clamav"]
 EXPOSE 3310
 
 USER 101
-
-RUN crontab /etc/cron.d/clamav_check_cron
 
 # av daemon bootstrapping
 ADD bootstrap.sh /

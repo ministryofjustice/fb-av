@@ -9,7 +9,7 @@ set -e -u -o pipefail
 environment_name=$1
 deployment_name=$2
 kube_token=$3
-sentry_dsn=$SENTRY_DSN
+sentry_dsn=$4
 
 echo "kubectl configure credentials"
 kubectl config set-credentials "circleci_${environment_name}_${deployment_name}" --token="${kube_token}"

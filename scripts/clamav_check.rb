@@ -11,12 +11,12 @@ end
 
 FRESHCLAM_LOG_FILE = '/var/log/clamav/freshclam.log'.freeze
 BYTECODE = /bytecode.cvd (database is up to date|updated)/.freeze
-DAILY = /daily.cld (database is up to date|updated)/.freeze
+DAILY = /(daily.cld|daily.cvd) (database is up to date|updated)/.freeze
 MAIN = /main.cvd (database is up to date|updated)/.freeze
 
 scheduler = Rufus::Scheduler.new
 
-scheduler.cron '30 15 * * *' do
+scheduler.cron '50 15 * * *' do
   logger.info('Starting check')
 
   today = Date.today.strftime("%a %b %d")

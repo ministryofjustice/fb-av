@@ -36,3 +36,8 @@ spec:
           - configMapRef:
               name: fb-av-env-{{ .Values.environmentName }}
         env:
+          - name: SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                name: fb-av-secrets-{{ .Values.environmentName }}
+                key: sentry_dsn

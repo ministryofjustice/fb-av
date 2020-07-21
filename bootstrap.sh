@@ -8,6 +8,9 @@ set -m
 freshclam -d &
 clamd &
 
+# start clamav update checker
+ruby clamav_check.rb &
+
 # recognize PIDs
 pidlist=`jobs -p`
 

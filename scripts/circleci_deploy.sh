@@ -9,6 +9,7 @@ set -e -u -o pipefail
 environment_name=$1
 deployment_name=$2
 kube_token=$3
+sentry_dsn=$4
 
 echo "kubectl configure credentials"
 kubectl config set-credentials "circleci_${environment_name}_${deployment_name}" --token="${kube_token}"
@@ -20,4 +21,15 @@ echo "kubectl use circleci context"
 kubectl config use-context "circleci_${environment_name}_${deployment_name}"
 
 echo "apply kubernetes changes to ${environment_name} ${deployment_name}"
-./scripts/deploy_platform.sh -p $environment_name -d $deployment_name -s $CIRCLE_SHA1
+
+CONFIG_FILE="/tmp/fb-av-$environment_name-$deployment_name.yaml"
+
+helm template deploy/fb-av-chart \
+  --set app_image_tag="APP_${CIRCLE_SHA1}" \
+  --set circleSha1=$CIRCLE_SHA1 \
+  --set platformEnv=$environment_name \
+  --set environmentName="${environment_name}-${deployment_name}" \
+  --set sentry_dsn=$sentry_dsn \
+  > $CONFIG_FILE
+
+kubectl apply -f $CONFIG_FILE -n formbuilder-platform-$environment_name-$deployment_name

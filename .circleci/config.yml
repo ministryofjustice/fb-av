@@ -18,10 +18,10 @@ jobs:
           command: './scripts/circleci_build.sh test'
       - run:
           name: deploy to test dev
-          command: './scripts/circleci_deploy.sh test dev $KUBE_TOKEN_TEST_DEV'
+          command: './scripts/circleci_deploy.sh test dev $KUBE_TOKEN_TEST_DEV $SENTRY_DSN_TEST'
       - run:
           name: deploy to test production
-          command: './scripts/circleci_deploy.sh test production $KUBE_TOKEN_TEST_PRODUCTION'
+          command: './scripts/circleci_deploy.sh test production $KUBE_TOKEN_TEST_PRODUCTION $SENTRY_DSN_TEST'
   build_and_deploy_to_live:
     working_directory: ~/circle/git/fb-av
     docker: *ecr_image
@@ -36,10 +36,10 @@ jobs:
           command: './scripts/circleci_build.sh live'
       - run:
           name: deploy to live dev
-          command: './scripts/circleci_deploy.sh live dev $KUBE_TOKEN_LIVE_DEV'
+          command: './scripts/circleci_deploy.sh live dev $KUBE_TOKEN_LIVE_DEV $SENTRY_DSN_TEST'
       - run:
           name: deploy to live production
-          command: './scripts/circleci_deploy.sh live production $KUBE_TOKEN_LIVE_PRODUCTION'
+          command: './scripts/circleci_deploy.sh live production $KUBE_TOKEN_LIVE_PRODUCTION $SENTRY_DSN_LIVE'
 
 workflows:
   version: 2

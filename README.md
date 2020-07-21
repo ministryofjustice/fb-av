@@ -41,3 +41,8 @@ Continuous Integration (CI) is enabled on this project via CircleCI.
 
 On merge to master tests are executed and if green deployed to the test environment. This build can then be promoted to production
 
+## Monitoring
+
+Container logs are shipped to Kibana like every other app, however there is no alerting facility there. Therefore there is a cron job which triggers the `clamav_check.rb` script daily. This does a very rudimentary check to see if the daily updates completed successfully and if not sends an alert to [Sentry](https://sentry.service.dsd.io/).
+
+It currently bundles all the log updates per day, therefore if an update in the morning is successful but an update in the evening is not, the alert will not be sent until the next day.

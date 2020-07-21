@@ -1,13 +1,17 @@
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 # Debian Base to use
-ENV DEBIAN_VERSION stretch
+ENV DEBIAN_VERSION buster
 
 # initial install of av daemon
 RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-free" > /etc/apt/sources.list && \
     echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION-updates main contrib non-free" >> /etc/apt/sources.list && \
     echo "deb http://security.debian.org/ $DEBIAN_VERSION/updates main contrib non-free" >> /etc/apt/sources.list && \
     apt-get update && \
+    apt-get upgrade && \
+    apt-get install ruby-full -y && \
+    gem install sentry-raven && \
+    gem install rufus-scheduler && \
     apt-get install -y ca-certificates && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -qq \
         clamav \
@@ -32,6 +36,9 @@ RUN mkdir /var/run/clamav && \
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
     echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
     sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf
+
+# monitor clamav updates
+ADD scripts/clamav_check.rb /
 
 # volume provision
 VOLUME ["/var/lib/clamav"]

@@ -27,7 +27,7 @@ spec:
             memory: "1024Mi"
           limits:
             cpu: "150m"
-            memory: "2500Mi"
+            memory: "3500Mi"
         ports:
           - containerPort: 3310
         # non-secret env vars

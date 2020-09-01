@@ -11,17 +11,17 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-        name: Setup base environment variable
-        command: |
-          echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
-    - run:
-        name: cloning deploy scripts
-        command: 'git clone -b add-more-images-to-build git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
-    - run:
-        name: build and push docker images
-        environment:
-          ENVIRONMENT_NAME: test
-        command: './deploy-scripts/bin/build'
+          name: Setup base environment variable
+          command: |
+            echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
+      - run:
+          name: cloning deploy scripts
+          command: 'git clone -b add-more-images-to-build git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+      - run:
+          name: build and push docker images
+          environment:
+            ENVIRONMENT_NAME: test
+          command: './deploy-scripts/bin/build'
       - run:
           name: deploy to test dev
           command: './scripts/circleci_deploy.sh test dev $K8S_TOKEN_TEST_DEV $SENTRY_DSN_TEST'
@@ -35,17 +35,17 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-        name: Setup base environment variable
-        command: |
-          echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
-    - run:
-        name: cloning deploy scripts
-        command: 'git clone -b add-more-images-to-build git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
-    - run:
-        name: build and push docker images
-        environment:
-          ENVIRONMENT_NAME: live
-        command: './deploy-scripts/bin/build'
+          name: Setup base environment variable
+          command: |
+            echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
+      - run:
+          name: cloning deploy scripts
+          command: 'git clone -b add-more-images-to-build git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+      - run:
+          name: build and push docker images
+          environment:
+            ENVIRONMENT_NAME: live
+          command: './deploy-scripts/bin/build'
       - run:
           name: deploy to live dev
           command: './scripts/circleci_deploy.sh live dev $K8S_TOKEN_LIVE_DEV $SENTRY_DSN_TEST'

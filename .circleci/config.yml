@@ -11,17 +11,23 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: npm install
-          command: 'npm install'
-      - run:
-          name: build and push docker images
-          command: './scripts/circleci_build.sh test'
+        name: Setup base environment variable
+        command: |
+          echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
+    - run:
+        name: cloning deploy scripts
+        command: 'git clone -b add-more-images-to-build git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+    - run:
+        name: build and push docker images
+        environment:
+          ENVIRONMENT_NAME: test
+        command: './deploy-scripts/bin/build'
       - run:
           name: deploy to test dev
-          command: './scripts/circleci_deploy.sh test dev $KUBE_TOKEN_TEST_DEV $SENTRY_DSN_TEST'
+          command: './scripts/circleci_deploy.sh test dev $K8S_TOKEN_TEST_DEV $SENTRY_DSN_TEST'
       - run:
           name: deploy to test production
-          command: './scripts/circleci_deploy.sh test production $KUBE_TOKEN_TEST_PRODUCTION $SENTRY_DSN_TEST'
+          command: './scripts/circleci_deploy.sh test production $K8S_TOKEN_TEST_PRODUCTION $SENTRY_DSN_TEST'
   build_and_deploy_to_live:
     working_directory: ~/circle/git/fb-av
     docker: *ecr_image
@@ -29,17 +35,23 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: npm install
-          command: 'npm install'
-      - run:
-          name: build and push docker images
-          command: './scripts/circleci_build.sh live'
+        name: Setup base environment variable
+        command: |
+          echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
+    - run:
+        name: cloning deploy scripts
+        command: 'git clone -b add-more-images-to-build git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+    - run:
+        name: build and push docker images
+        environment:
+          ENVIRONMENT_NAME: live
+        command: './deploy-scripts/bin/build'
       - run:
           name: deploy to live dev
-          command: './scripts/circleci_deploy.sh live dev $KUBE_TOKEN_LIVE_DEV $SENTRY_DSN_TEST'
+          command: './scripts/circleci_deploy.sh live dev $K8S_TOKEN_LIVE_DEV $SENTRY_DSN_TEST'
       - run:
           name: deploy to live production
-          command: './scripts/circleci_deploy.sh live production $KUBE_TOKEN_LIVE_PRODUCTION $SENTRY_DSN_LIVE'
+          command: './scripts/circleci_deploy.sh live production $K8S_TOKEN_LIVE_PRODUCTION $SENTRY_DSN_LIVE'
 
 workflows:
   version: 2

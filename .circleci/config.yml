@@ -60,7 +60,9 @@ workflows:
       - build_and_deploy_to_test:
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - deploy/add-deploy-scripts
       - confirm_live_deploy:
           type: approval
           requires:

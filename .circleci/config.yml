@@ -22,6 +22,19 @@ jobs:
       - run:
           name: deploy to test production
           command: './scripts/circleci_deploy.sh test production $KUBE_TOKEN_TEST_PRODUCTION $SENTRY_DSN_TEST'
+  trigger_acceptance_tests:
+    working_directory: ~/circle/git/fb-av
+    docker: *ecr_image
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "36:f1:e3:84:63:24:2b:b8:e3:83:aa:cd:11:81:4c:01"
+      - run:
+          name: cloning deploy scripts
+          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+      - run:
+          name: "Trigger Acceptance Tests"
+          command: './deploy-scripts/bin/acceptance_tests'
   build_and_deploy_to_live:
     working_directory: ~/circle/git/fb-av
     docker: *ecr_image
@@ -48,11 +61,19 @@ workflows:
       - build_and_deploy_to_test:
           filters:
             branches:
-              only: master
+              only:
+                - master
+      - trigger_acceptance_tests:
+          requires:
+            - build_and_deploy_to_test
+          filters:
+            branches:
+              only:
+                - master
       - confirm_live_deploy:
           type: approval
           requires:
-            - build_and_deploy_to_test
+            - trigger_acceptance_tests
       - build_and_deploy_to_live:
           requires:
             - confirm_live_deploy

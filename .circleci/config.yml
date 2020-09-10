@@ -10,28 +10,43 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          name: npm install
-          command: 'npm install'
+      - add_ssh_keys: &ssh_keys
+          fingerprints:
+            - "6d:4e:f2:a6:5b:d8:59:b7:6b:3f:be:20:6b:68:1f:96"
+      - run: &base_environment_variables
+          name: Setup base environment variable
+          command: |
+            echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
+            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_6d4ef2a65bd859b76b3fbe206b681f96" >> $BASH_ENV
+      - run: &deploy_scripts
+          name: cloning deploy scripts
+          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
       - run:
           name: build and push docker images
-          command: './scripts/circleci_build.sh test'
+          environment:
+            ENVIRONMENT_NAME: test
+          command: './deploy-scripts/bin/build'
       - run:
           name: deploy to test dev
-          command: './scripts/circleci_deploy.sh test dev $KUBE_TOKEN_TEST_DEV $SENTRY_DSN_TEST'
+          environment:
+            APPLICATION_NAME: fb-av
+            PLATFORM_ENV: test
+            DEPLOYMENT_ENV: dev
+            K8S_NAMESPACE: formbuilder-platform-test-dev
+          command: './deploy-scripts/bin/deploy'
       - run:
           name: deploy to test production
-          command: './scripts/circleci_deploy.sh test production $KUBE_TOKEN_TEST_PRODUCTION $SENTRY_DSN_TEST'
+          environment:
+            APPLICATION_NAME: fb-av
+            PLATFORM_ENV: test
+            DEPLOYMENT_ENV: production
+            K8S_NAMESPACE: formbuilder-platform-test-production
+          command: './deploy-scripts/bin/deploy'
   trigger_acceptance_tests:
     working_directory: ~/circle/git/fb-av
     docker: *ecr_image
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "36:f1:e3:84:63:24:2b:b8:e3:83:aa:cd:11:81:4c:01"
-      - run:
-          name: cloning deploy scripts
-          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+      - run: *deploy_scripts
       - run:
           name: "Trigger Acceptance Tests"
           command: './deploy-scripts/bin/acceptance_tests'
@@ -41,18 +56,30 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          name: npm install
-          command: 'npm install'
+      - add_ssh_keys: *ssh_keys
+      - run: *base_environment_variables
+      - run: *deploy_scripts
       - run:
           name: build and push docker images
-          command: './scripts/circleci_build.sh live'
+          environment:
+            ENVIRONMENT_NAME: live
+          command: './deploy-scripts/bin/build'
       - run:
           name: deploy to live dev
-          command: './scripts/circleci_deploy.sh live dev $KUBE_TOKEN_LIVE_DEV $SENTRY_DSN_TEST'
+          environment:
+            APPLICATION_NAME: fb-av
+            PLATFORM_ENV: live
+            DEPLOYMENT_ENV: dev
+            K8S_NAMESPACE: formbuilder-platform-live-dev
+          command: './deploy-scripts/bin/deploy'
       - run:
           name: deploy to live production
-          command: './scripts/circleci_deploy.sh live production $KUBE_TOKEN_LIVE_PRODUCTION $SENTRY_DSN_LIVE'
+          environment:
+            APPLICATION_NAME: fb-av
+            PLATFORM_ENV: live
+            DEPLOYMENT_ENV: production
+            K8S_NAMESPACE: formbuilder-platform-live-production
+          command: './deploy-scripts/bin/deploy'
 
 workflows:
   version: 2

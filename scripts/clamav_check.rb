@@ -19,11 +19,14 @@ scheduler = Rufus::Scheduler.new
 scheduler.cron '50 15 * * *' do
   logger.info('Starting check')
 
-  today = Date.today.strftime("%a %b %d")
+  today = Date.today
+  day_format = today.day < 10 ? ' %-d' : '%d'
+  formatted_today = today.strftime("%a %b #{day_format}")
+
   begin
     todays_log_lines = File.read(FRESHCLAM_LOG_FILE)
                            .split("\n")
-                           .select { |line| line.include?(today) }
+                           .select { |line| line.include?(formatted_today) }
 
     unless todays_log_lines.find { |line| line.match(BYTECODE) }
       raise(StandardError, "Bytecode database failed to update -> #{Time.now}")

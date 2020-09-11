@@ -42,13 +42,14 @@ jobs:
             DEPLOYMENT_ENV: production
             K8S_NAMESPACE: formbuilder-platform-test-production
           command: './deploy-scripts/bin/deploy'
-  trigger_acceptance_tests:
-    working_directory: ~/circle/git/fb-av
+  acceptance_tests:
     docker: *ecr_image
+    resource_class: large
     steps:
+      - setup_remote_docker
       - run: *deploy_scripts
       - run:
-          name: "Trigger Acceptance Tests"
+          name: Run acceptance tests
           command: './deploy-scripts/bin/acceptance_tests'
   build_and_deploy_to_live:
     working_directory: ~/circle/git/fb-av
@@ -90,7 +91,7 @@ workflows:
             branches:
               only:
                 - master
-      - trigger_acceptance_tests:
+      - acceptance_tests:
           requires:
             - build_and_deploy_to_test
           filters:
@@ -100,7 +101,7 @@ workflows:
       - confirm_live_deploy:
           type: approval
           requires:
-            - trigger_acceptance_tests
+            - acceptance_tests
       - build_and_deploy_to_live:
           requires:
             - confirm_live_deploy

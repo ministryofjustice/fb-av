@@ -7,3 +7,5 @@ update_configs:
     default_reviewers:
     - tomas-stefano
     - brenetic
+    - mattempty
+    - njseeto

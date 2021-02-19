@@ -10,9 +10,9 @@ Raven.configure do |config|
 end
 
 FRESHCLAM_LOG_FILE = '/var/log/clamav/freshclam.log'.freeze
-BYTECODE = /bytecode.cvd (database is up to date|updated)/.freeze
+BYTECODE = /(bytecode.cld|bytecode.cvd) (database is up to date|updated)/.freeze
 DAILY = /(daily.cld|daily.cvd) (database is up to date|updated)/.freeze
-MAIN = /main.cvd (database is up to date|updated)/.freeze
+MAIN = /(main.cld|main.cvd) (database is up to date|updated)/.freeze
 
 scheduler = Rufus::Scheduler.new
 

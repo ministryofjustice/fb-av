@@ -10,9 +10,11 @@ Raven.configure do |config|
 end
 
 FRESHCLAM_LOG_FILE = '/var/log/clamav/freshclam.log'.freeze
-BYTECODE = /(bytecode.cld|bytecode.cvd) (database is up to date|updated)/.freeze
-DAILY = /(daily.cld|daily.cvd) (database is up to date|updated)/.freeze
-MAIN = /(main.cld|main.cvd) (database is up to date|updated)/.freeze
+UPDATE_TYPES = {
+  bytecode: /(bytecode.cld|bytecode.cvd) (database is up to date|updated)/,
+  daily: /(daily.cld|daily.cvd) (database is up to date|updated)/,
+  main: /(main.cld|main.cvd) (database is up to date|updated)/
+}
 
 scheduler = Rufus::Scheduler.new
 
@@ -28,19 +30,15 @@ scheduler.cron '50 15 * * *' do
                            .split("\n")
                            .select { |line| line.include?(formatted_today) }
 
-    unless todays_log_lines.find { |line| line.match(BYTECODE) }
-      raise(StandardError, "Bytecode database failed to update -> #{Time.now}")
+    UPDATE_TYPES.each do |type, regex|
+      unless todays_log_lines.find { |line| line.match(regex) }
+        message = "#{type} database failed to update for #{formatted_today}"
+        logger.info(message)
+        raise(StandardError, message)
+      end
     end
 
-    unless todays_log_lines.find { |line| line.match(DAILY) }
-      raise(StandardError, "Daily database failed to update -> #{Time.now}")
-    end
-
-    unless todays_log_lines.find { |line| line.match(MAIN) }
-      raise(StandardError, "Main database failed to update -> #{Time.now}")
-    end
-
-    logger.info('Everything is up to date')
+    logger.info("Everything is up to date for #{formatted_today}")
   rescue StandardError => e
     Raven.capture_exception(e)
   end

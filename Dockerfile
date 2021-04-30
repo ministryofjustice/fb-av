@@ -22,10 +22,16 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
     rm -rf /var/lib/apt/lists/*
 
 # initial update of av databases
-RUN wget -O /var/lib/clamav/main.cvd http://database.clamav.net/main.cvd && \
-    wget -O /var/lib/clamav/daily.cvd http://database.clamav.net/daily.cvd && \
-    wget -O /var/lib/clamav/bytecode.cvd http://database.clamav.net/bytecode.cvd && \
-    chown clamav:clamav /var/lib/clamav/*.cvd
+# RUN wget -O /var/lib/clamav/main.cvd http://database.clamav.net/main.cvd && \
+#     wget -O /var/lib/clamav/daily.cvd http://database.clamav.net/daily.cvd && \
+#     wget -O /var/lib/clamav/bytecode.cvd http://database.clamav.net/bytecode.cvd && \
+#     chown clamav:clamav /var/lib/clamav/*.cvd
+
+COPY ./main.cvd  /var/lib/clamav/main.cvd
+COPY ./daily.cvd  /var/lib/clamav/daily.cvd
+COPY ./bytecode.cvd  /var/lib/clamav/bytecode.cvd
+
+RUN chown clamav:clamav /var/lib/clamav/*.cvd
 
 # permission juggling
 RUN mkdir /var/run/clamav && \
@@ -35,7 +41,8 @@ RUN mkdir /var/run/clamav && \
 # av configuration update
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
     echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
-    sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf
+    sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf && \
+    echo "SafeBrowsing no" >> /etc/clamav/freshclam.conf
 
 # monitor clamav updates
 ADD scripts/clamav_check.rb /

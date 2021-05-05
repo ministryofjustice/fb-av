@@ -21,15 +21,9 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# initial update of av databases
-# RUN wget -O /var/lib/clamav/main.cvd http://database.clamav.net/main.cvd && \
-#     wget -O /var/lib/clamav/daily.cvd http://database.clamav.net/daily.cvd && \
-#     wget -O /var/lib/clamav/bytecode.cvd http://database.clamav.net/bytecode.cvd && \
-#     chown clamav:clamav /var/lib/clamav/*.cvd
-
-COPY ./main.cvd  /var/lib/clamav/main.cvd
-COPY ./daily.cvd  /var/lib/clamav/daily.cvd
-COPY ./bytecode.cvd  /var/lib/clamav/bytecode.cvd
+COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/main.cvd /var/lib/clamav/main.cvd
+COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/daily.cvd /var/lib/clamav/daily.cvd
+COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/bytecode.cvd /var/lib/clamav/bytecode.cvd
 
 RUN chown clamav:clamav /var/lib/clamav/*.cvd
 

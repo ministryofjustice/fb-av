@@ -22,6 +22,16 @@ TCPAddr localhost # or wherever you setup this container
 
 copied from https://github.com/mko-x/docker-clamav
 
+ClamAV have databases that can be downloaded manually, these can be found here:
+- http://database.clamav.net/main.cvd
+- http://database.clamav.net/daily.cvd
+- http://database.clamav.net/bytecode.cvd
+
+The ClamAV moderators limited the ability to download these files via ways such as `wget` and `curl` due the enormous number of daily downloads, more details [here](https://www.mail-archive.com/clamav-users@lists.clamav.net/msg49810.html).
+
+As a result, we have built a ECR image that holds the 3 files we require, `main.cvd`, `daily.cvd` and `bytecode.cvd`.
+The [Dockerfile](Dockerfile) copies these 3 files from the image, freshclam should update these databases in the background, however, any issues with the clamav databases might be resolved by manually downloading the files and updating the `fb-av:base` ECR image.
+
 ## Run Locally
 `docker run -p 3310:3310 [image reference]`
 

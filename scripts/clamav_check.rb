@@ -11,9 +11,9 @@ end
 
 FRESHCLAM_LOG_FILE = '/var/log/clamav/freshclam.log'.freeze
 UPDATE_TYPES = {
-  bytecode: /(bytecode.cld|bytecode.cvd) (database is up to date|updated)/,
-  daily: /(daily.cld|daily.cvd) (database is up to date|updated)/,
-  main: /(main.cld|main.cvd) (database is up to date|updated)/
+  bytecode: /(bytecode.cld|bytecode.cvd) (database is (up-to-date|updated|up to date))/,
+  daily: /(daily.cld|daily.cvd) (database is (up-to-date|updated|up to date))/,
+  main: /(main.cld|main.cvd) (database is (up-to-date|updated|up to date))/
 }
 
 scheduler = Rufus::Scheduler.new

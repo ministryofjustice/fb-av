@@ -5,6 +5,11 @@ metadata:
   name: "fb-av-{{ .Values.environmentName }}"
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0%
   selector:
     matchLabels:
       app: "fb-av-{{ .Values.environmentName }}"

@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "fb-av-{{ .Values.environmentName }}"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0%
+  selector:
+    matchLabels:
+      app: "fb-av-{{ .Values.environmentName }}"
+  template:
+    metadata:
+      labels:
+        app: "fb-av-{{ .Values.environmentName }}"
+        appGroup: "fb-av"
+        fb-service-token-cache-access: "false"
+        tier: "frontend"
+    spec:
+      serviceAccountName: "formbuilder-av-{{ .Values.environmentName }}"
+      containers:
+      - name: "fb-av-{{ .Values.environmentName }}"
+        image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:{{ .Values.circleSha1 }}"
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "1024Mi"
+          limits:
+            cpu: "150m"
+            memory: "3500Mi"
+        ports:
+          - containerPort: 3310
+        # non-secret env vars
+        # defined in config_map.yaml
+        envFrom:
+          - configMapRef:
+              name: fb-av-env-{{ .Values.environmentName }}
+        env:
+          - name: SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                name: fb-av-secrets-{{ .Values.environmentName }}
+                key: sentry_dsn

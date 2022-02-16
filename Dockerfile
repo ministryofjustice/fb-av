@@ -10,6 +10,7 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install ruby-full -y && \
+    gem install faraday -v >= 1.9.3 && \
     gem install sentry-raven && \
     gem install rufus-scheduler && \
     apt-get install -y ca-certificates && \

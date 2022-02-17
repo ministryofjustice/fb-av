@@ -66,16 +66,16 @@ jobs:
           only_for_branches: master
           failure_message: ":facepalm:  Failed job $CIRCLE_JOB  :homer-disappear:"
           include_job_number_field: false
-  acceptance_tests:
-    docker: *ecr_image
-    resource_class: large
-    steps:
-      - setup_remote_docker
-      - run: *deploy_scripts
-      - run:
-          name: Run acceptance tests
-          command: './deploy-scripts/bin/acceptance_tests'
-      - slack/status: *slack_status
+  # acceptance_tests:
+  #   docker: *ecr_image
+  #   resource_class: large
+  #   steps:
+  #     - setup_remote_docker
+  #     - run: *deploy_scripts
+  #     - run:
+  #         name: Run acceptance tests
+  #         command: './deploy-scripts/bin/acceptance_tests'
+  #     - slack/status: *slack_status
   build_and_deploy_to_live:
     working_directory: ~/circle/git/fb-av
     docker: *ecr_image
@@ -146,22 +146,24 @@ workflows:
             branches:
               only:
                 - master
-      - acceptance_tests:
-          requires:
-            - build_and_deploy_to_test
-          filters:
-            branches:
-              only:
-                - master
+      # - acceptance_tests:
+      #     requires:
+      #       - build_and_deploy_to_test
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
       - slack/approval-notification:
           message: ":portalorangeparrot:  Deployment to Live pending approval  :portalblueparrot:"
           include_job_number_field: false
           requires:
-            - acceptance_tests
+            # - acceptance_tests
+            - build_and_deploy_to_test
       - confirm_live_deploy:
           type: approval
           requires:
-            - acceptance_tests
+            # - acceptance_tests
+            - build_and_deploy_to_test
       - build_and_deploy_to_live:
           requires:
             - confirm_live_deploy

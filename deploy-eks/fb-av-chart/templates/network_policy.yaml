@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-user-filestore-to-access-av
-  namespace: formbuilder-platform-{{ .Values.environmentName }}
+  namespace:  {{ .Values.namespace }}
 spec:
   podSelector:
     matchLabels:

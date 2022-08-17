@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: fb-av-env-{{ .Values.environmentName }}
-  namespace:  {{ .Values.namespace }}
-data:

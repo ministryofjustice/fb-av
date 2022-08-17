@@ -105,22 +105,6 @@ jobs:
             ENVIRONMENT_NAME: live
           command: './deploy-scripts/bin/build'
       - run:
-          name: deploy to live dev
-          environment:
-            APPLICATION_NAME: fb-av
-            PLATFORM_ENV: live
-            DEPLOYMENT_ENV: dev
-            K8S_NAMESPACE: formbuilder-platform-live-dev
-          command: './deploy-scripts/bin/deploy'
-      - run:
-          name: deploy to live production
-          environment:
-            APPLICATION_NAME: fb-av
-            PLATFORM_ENV: live
-            DEPLOYMENT_ENV: production
-            K8S_NAMESPACE: formbuilder-platform-live-production
-          command: './deploy-scripts/bin/deploy'
-      - run:
           name: deploy to live dev in EKS
           environment:
             APPLICATION_NAME: fb-av

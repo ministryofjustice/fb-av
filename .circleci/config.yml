@@ -86,7 +86,7 @@ jobs:
   #         name: Run acceptance tests
   #         command: './deploy-scripts/bin/acceptance_tests'
   #     - slack/status: *slack_status
-  build_and_deploy_to_live:
+  deploy_to_live:
     working_directory: ~/circle/git/fb-av
     docker: *ecr_image
     steps:
@@ -95,11 +95,6 @@ jobs:
       - add_ssh_keys: *ssh_keys
       - run: *base_environment_variables
       - run: *deploy_scripts
-      - run:
-          name: build and push docker images
-          environment:
-            ENVIRONMENT_NAME: live
-          command: './deploy-scripts/bin/build'
       - run:
           name: deploy to live dev in EKS
           environment:
@@ -121,6 +116,23 @@ jobs:
           success_message: ":rocket:  Successfully deployed to Live  :guitar:"
           failure_message: ":alert:  Failed to deploy to Live  :try_not_to_cry:"
           include_job_number_field: false
+  deploy_to_saas_live:
+    working_directory: ~/circle/git/fb-av
+    docker: *ecr_image
+    steps:
+      - checkout
+      - setup_remote_docker
+      - add_ssh_keys: *ssh_keys
+      - run: *base_environment_variables
+      - run: *deploy_scripts
+      - run:
+          name: deploy to saas live in EKS
+          environment:
+            APPLICATION_NAME: fb-av
+            PLATFORM_ENV: live
+            K8S_NAMESPACE: formbuilder-saas-live
+          command: './deploy-scripts/bin/deploy-eks'
+      - slack/status: *slack_status
   smoke_tests:
     docker: *ecr_image
     steps:
@@ -167,9 +179,12 @@ workflows:
             # - acceptance_tests
             - deploy_to_test
             - deploy_to_saas_test
-      - build_and_deploy_to_live:
+      - deploy_to_live:
+          requires:
+            - confirm_live_deploy
+      - deploy_to_saas_live:
           requires:
             - confirm_live_deploy
       - smoke_tests:
           requires:
-            - build_and_deploy_to_live
+            - deploy_to_live

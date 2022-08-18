@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-{{ .Values.accessing_app }}-to-access-av
-  namespace:  {{ .Values.namespace }}
+  namespace: {{ .Values.namespace }}
 spec:
   podSelector:
     matchLabels:

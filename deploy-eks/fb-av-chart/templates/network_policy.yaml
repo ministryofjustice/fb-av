@@ -6,7 +6,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: fb-av-{{ .Values.environmentName }}
+      app: fb-av-svc-{{ .Values.environmentName }}
   policyTypes:
   - Ingress
   ingress:

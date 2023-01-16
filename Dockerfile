@@ -26,7 +26,7 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
 # COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/daily.cvd /var/lib/clamav/daily.cvd
 # COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/bytecode.cvd /var/lib/clamav/bytecode.cvd
 
-RUN chown clamav:clamav /var/lib/clamav/*.cvd
+# RUN chown clamav:clamav /var/lib/clamav/*.cvd
 
 # permission juggling
 RUN mkdir /var/run/clamav && \

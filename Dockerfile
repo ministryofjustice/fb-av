@@ -35,6 +35,8 @@ RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
 
 # monitor clamav updates
 ADD scripts/clamav_check.rb /
+# add the probe script
+ADD readiness_probe.sh /
 
 # volume provision
 VOLUME ["/var/lib/clamav"]

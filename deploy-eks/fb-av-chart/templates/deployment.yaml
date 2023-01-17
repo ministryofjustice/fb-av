@@ -50,8 +50,6 @@ spec:
         readinessProbe:
           exec:
             command:
-              # - /bin/bash
-              # - -c
               - /readiness_probe.sh
           initialDelaySeconds: 300
           periodSeconds: 15

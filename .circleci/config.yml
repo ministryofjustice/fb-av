@@ -155,44 +155,43 @@ workflows:
             branches:
               only:
                 - master
-                - update-circleci
       - deploy_to_test:
           context: *context
           requires:
             - build_image
-      # - deploy_to_saas_test:
-      #     context: *context
+      - deploy_to_saas_test:
+          context: *context
+          requires:
+            - build_image
+      # - acceptance_tests:
       #     requires:
-      #       - build_image
-      # # - acceptance_tests:
-      # #     requires:
-      # #       - deploy_to_test
-      # #       - deploy_to_saas_test
-      # #     filters:
-      # #       branches:
-      # #         only:
-      # #           - master
-      # - slack/approval-notification:
-      #     message: ":portalorangeparrot:  Deployment to Live pending approval  :portalblueparrot:"
-      #     include_job_number_field: false
-      #     requires:
-      #       # - acceptance_tests
       #       - deploy_to_test
       #       - deploy_to_saas_test
-      # - confirm_live_deploy:
-      #     type: approval
-      #     requires:
-      #       # - acceptance_tests
-      #       - deploy_to_test
-      #       - deploy_to_saas_test
-      # - deploy_to_live:
-      #     context: *context
-      #     requires:
-      #       - confirm_live_deploy
-      # - deploy_to_saas_live:
-      #     context: *context
-      #     requires:
-      #       - confirm_live_deploy
-      # - smoke_tests:
-      #     requires:
-      #       - deploy_to_live
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      - slack/approval-notification:
+          message: ":portalorangeparrot:  Deployment to Live pending approval  :portalblueparrot:"
+          include_job_number_field: false
+          requires:
+            # - acceptance_tests
+            - deploy_to_test
+            - deploy_to_saas_test
+      - confirm_live_deploy:
+          type: approval
+          requires:
+            # - acceptance_tests
+            - deploy_to_test
+            - deploy_to_saas_test
+      - deploy_to_live:
+          context: *context
+          requires:
+            - confirm_live_deploy
+      - deploy_to_saas_live:
+          context: *context
+          requires:
+            - confirm_live_deploy
+      - smoke_tests:
+          requires:
+            - deploy_to_live

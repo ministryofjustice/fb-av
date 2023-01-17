@@ -50,7 +50,7 @@ spec:
         readinessProbe:
           exec:
             command:
-              - /readiness_probe.sh
+              - ./readiness_probe.sh
           initialDelaySeconds: 500
           periodSeconds: 15
           successThreshold: 1

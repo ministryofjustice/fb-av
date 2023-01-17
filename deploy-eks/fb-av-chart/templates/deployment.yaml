@@ -12,12 +12,12 @@ spec:
       maxSurge: 100%
       maxUnavailable: 0%
       readinessProbe:
-      exec:
-        command:
-          - /readiness_probe.sh
-      initialDelaySeconds: 500
-      periodSeconds: 15
-      successThreshold: 1
+        exec:
+          command:
+            - /readiness_probe.sh
+        initialDelaySeconds: 500
+        periodSeconds: 15
+        successThreshold: 1
   selector:
     matchLabels:
       app: "fb-av-{{ .Values.environmentName }}"

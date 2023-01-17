@@ -6,18 +6,18 @@ metadata:
   namespace: "{{ .Values.namespace }}"
 spec:
   replicas: 1
-  readinessProbe:
-        exec:
-          command:
-            - /readiness_probe.sh
-        initialDelaySeconds: 500
-        periodSeconds: 15
-        successThreshold: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 100%
       maxUnavailable: 0%
+      readinessProbe:
+      exec:
+        command:
+          - /readiness_probe.sh
+      initialDelaySeconds: 500
+      periodSeconds: 15
+      successThreshold: 1
   selector:
     matchLabels:
       app: "fb-av-{{ .Values.environmentName }}"

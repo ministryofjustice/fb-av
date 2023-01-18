@@ -47,3 +47,11 @@ spec:
               secretKeyRef:
                 name: fb-av-secrets-{{ .Values.environmentName }}
                 key: sentry_dsn
+        readinessProbe:
+          exec:
+            command:
+              - /readiness_probe.sh
+          initialDelaySeconds: 300
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 3

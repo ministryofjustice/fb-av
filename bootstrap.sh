@@ -3,9 +3,15 @@
 # copied from https://github.com/mko-x/docker-clamav
 
 set -m
-
+MAIN_FILE="/var/lib/clamav/main.cvd"
 # start clam service itself and the updater in background as daemon
 freshclam -d &
+echo -e "waiting for clam to update..."
+until [[ -e ${MAIN_FILE} ]]
+do
+    :
+done
+echo -e "starting clamd..."
 clamd &
 
 # start clamav update checker

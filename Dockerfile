@@ -22,12 +22,6 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/main.cvd /var/lib/clamav/main.cvd
-COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/daily.cvd /var/lib/clamav/daily.cvd
-COPY --from=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:base /var/lib/clamav/bytecode.cvd /var/lib/clamav/bytecode.cvd
-
-RUN chown clamav:clamav /var/lib/clamav/*.cvd
-
 # permission juggling
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
@@ -41,6 +35,8 @@ RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
 
 # monitor clamav updates
 ADD scripts/clamav_check.rb /
+# add the probe script
+ADD readiness_probe.sh /
 
 # volume provision
 VOLUME ["/var/lib/clamav"]

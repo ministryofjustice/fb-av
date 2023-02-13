@@ -22,6 +22,11 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+COPY --from=ghcr.io/ministryofjustice/hmpps-clamav-freshclammed:latest /var/lib/clamav/main.cvd /var/lib/clamav/main.cvd
+COPY --from=ghcr.io/ministryofjustice/hmpps-clamav-freshclammed:latest /var/lib/clamav/daily.cld /var/lib/clamav/daily.cld
+COPY --from=ghcr.io/ministryofjustice/hmpps-clamav-freshclammed:latest /var/lib/clamav/bytecode.cvd /var/lib/clamav/bytecode.cvd
+
+RUN chown clamav:clamav /var/lib/clamav/*.cvd
 # permission juggling
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \

@@ -193,5 +193,6 @@ workflows:
           requires:
             - confirm_live_deploy
       - smoke_tests:
+          context: *context
           requires:
             - deploy_to_live

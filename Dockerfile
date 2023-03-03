@@ -1,6 +1,6 @@
 FROM clamav/clamav:stable
 
-UsER root
+USER root
 
 # initial install of packages
 RUN apk update && \

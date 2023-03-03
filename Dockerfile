@@ -8,7 +8,7 @@ RUN apk update && \
     apt-get ca-certificates && \
     gem install faraday -v >= 1.9.3 && \
     gem install sentry-raven && \
-    gem install rufus-scheduler && \
+    gem install rufus-scheduler
 
 # permission juggling
 RUN chown clamav:clamav /var/lib/clamav/*.cvd

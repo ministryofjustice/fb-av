@@ -4,8 +4,8 @@ USER root
 
 # initial install of packages
 RUN apk update && \
-    apt-get ruby && \
-    apt-get ca-certificates && \
+    apk ruby && \
+    apk ca-certificates && \
     gem install faraday -v >= 1.9.3 && \
     gem install sentry-raven && \
     gem install rufus-scheduler

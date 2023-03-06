@@ -1,38 +1,22 @@
-FROM debian:buster-slim
+FROM clamav/clamav:stable
 
-# Debian Base to use
-ENV DEBIAN_VERSION buster
+USER root
 
-# initial install of av daemon
-RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION-updates main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ $DEBIAN_VERSION/updates main contrib non-free" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install ruby-full -y && \
+# initial install of packages
+RUN apk update && \
+    apk add ruby && \
+    apk add ca-certificates && \
     gem install faraday -v >= 1.9.3 && \
     gem install sentry-raven && \
-    gem install rufus-scheduler && \
-    apt-get install -y ca-certificates && \
-    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -qq \
-        clamav \
-        clamav-daemon \
-        clamav-freshclam \
-        wget && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    gem install rufus-scheduler
 
-COPY --from=ghcr.io/ministryofjustice/hmpps-clamav-freshclammed:latest /var/lib/clamav/main.cvd /var/lib/clamav/main.cvd
-COPY --from=ghcr.io/ministryofjustice/hmpps-clamav-freshclammed:latest /var/lib/clamav/daily.cld /var/lib/clamav/daily.cld
-COPY --from=ghcr.io/ministryofjustice/hmpps-clamav-freshclammed:latest /var/lib/clamav/bytecode.cvd /var/lib/clamav/bytecode.cvd
-
-RUN chown clamav:clamav /var/lib/clamav/*.cvd
 # permission juggling
+RUN chown clamav:clamav /var/lib/clamav/*.cvd
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
     chmod 750 /var/run/clamav
 
-# av configuration update
+    # av configuration update
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
     echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
     sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf && \
@@ -49,8 +33,6 @@ VOLUME ["/var/lib/clamav"]
 # port provision
 EXPOSE 3310
 
-USER 101
-
 # av daemon bootstrapping
 ADD bootstrap.sh /
-CMD ["/bootstrap.sh"]
+CMD ["sh bootstrap.sh"]

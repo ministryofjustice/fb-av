@@ -4,8 +4,9 @@ USER root
 
 # initial install of packages
 RUN apk update && \
-    apk ruby && \
-    apk ca-certificates && \
+    apk add ruby && \
+    apk add ca-certificates && \
+    apk add ca-certificates && \
     gem install faraday -v >= 1.9.3 && \
     gem install sentry-raven && \
     gem install rufus-scheduler
@@ -16,7 +17,7 @@ RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
     chmod 750 /var/run/clamav
 
-# av configuration update
+    # av configuration update
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
     echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
     sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf && \

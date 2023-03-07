@@ -4,6 +4,7 @@ USER root
 
 # initial install of packages
 RUN apk update && \
+    apk add bash && \
     apk add ruby && \
     apk add ca-certificates && \
     gem install faraday -v >= 1.9.3 && \
@@ -12,9 +13,10 @@ RUN apk update && \
 
 # permission juggling
 RUN chown clamav:clamav /var/lib/clamav/*.cvd
-RUN mkdir /var/run/clamav && \
-    chown clamav:clamav /var/run/clamav && \
-    chmod 750 /var/run/clamav
+
+RUN mkdir /var/run/clamav /run/lock && \
+    chown -R clamav:clamav /var/run/clamav /run/lock /var/lock && \
+    chmod -R 750 /var/run/clamav /run/lock /var/lock
 
     # av configuration update
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
@@ -35,4 +37,7 @@ EXPOSE 3310
 
 # av daemon bootstrapping
 ADD bootstrap.sh /
-CMD ["sh bootstrap.sh"]
+
+CMD ["bash bootstrap.sh"]
+
+USER 100

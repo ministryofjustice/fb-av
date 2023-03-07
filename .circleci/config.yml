@@ -154,7 +154,7 @@ workflows:
           filters:
             branches:
               only:
-                - change-docker-base-image
+                - master
       - deploy_to_test:
           context: *context
           requires:

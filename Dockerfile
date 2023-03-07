@@ -18,7 +18,7 @@ RUN mkdir /var/run/clamav /run/lock && \
     chown -R clamav:clamav /var/run/clamav /run/lock /var/lock && \
     chmod -R 750 /var/run/clamav /run/lock /var/lock
 
-# av configuration update
+    # av configuration update
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
     echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
     sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf && \
@@ -37,6 +37,7 @@ EXPOSE 3310
 
 # av daemon bootstrapping
 ADD bootstrap.sh /
+
 CMD ["bash bootstrap.sh"]
 
 USER 100

@@ -136,6 +136,7 @@ jobs:
   smoke_tests:
     docker: *ecr_image
     steps:
+      - checkout
       - setup_remote_docker
       - run: *deploy_scripts
       - run:

@@ -183,7 +183,6 @@ workflows:
             branches:
               only:
                 - master
-                - ecr-migration
           requires:
             - login-to-aws
       - deploy_to_test:
@@ -209,21 +208,21 @@ workflows:
             # - acceptance_tests
             - deploy_to_test
             - deploy_to_saas_test
-      # - confirm_live_deploy:
-      #     type: approval
-      #     requires:
-      #       # - acceptance_tests
-      #       - deploy_to_test
-      #       - deploy_to_saas_test
-      # - deploy_to_live:
-      #     context: *context
-      #     requires:
-      #       - confirm_live_deploy
-      # - deploy_to_saas_live:
-      #     context: *context
-      #     requires:
-      #       - confirm_live_deploy
-      # - smoke_tests:
-      #     context: *context
-      #     requires:
-      #       - deploy_to_live
+      - confirm_live_deploy:
+          type: approval
+          requires:
+            # - acceptance_tests
+            - deploy_to_test
+            - deploy_to_saas_test
+      - deploy_to_live:
+          context: *context
+          requires:
+            - confirm_live_deploy
+      - deploy_to_saas_live:
+          context: *context
+          requires:
+            - confirm_live_deploy
+      - smoke_tests:
+          context: *context
+          requires:
+            - deploy_to_live

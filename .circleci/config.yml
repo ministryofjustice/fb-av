@@ -184,6 +184,8 @@ workflows:
               only:
                 - master
                 - ecr-migration
+          requires:
+            - login-to-aws
       - deploy_to_test:
           context: *context
           requires:

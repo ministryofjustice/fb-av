@@ -1,0 +1,19 @@
+# Simplify running the application inside a container locally.
+# Usage: `docker-compose up`
+#
+# Do not use docker-compose in production environments.
+#
+version: '3'
+
+volumes:
+  clamav-signatures:
+
+services:
+  clamav:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "3310:3310"
+    volumes:
+      - clamav-signatures:/var/lib/clamav

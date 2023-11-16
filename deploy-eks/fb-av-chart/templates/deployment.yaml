@@ -5,12 +5,12 @@ metadata:
   name: "fb-av-{{ .Values.environmentName }}"
   namespace: "{{ .Values.namespace }}"
 spec:
-  replicas: 2
+  replicas: 4
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 100%
-      maxUnavailable: 0%
+      maxUnavailable: 50%
   selector:
     matchLabels:
       app: "fb-av-{{ .Values.environmentName }}"
@@ -29,11 +29,11 @@ spec:
         imagePullPolicy: Always
         resources:
           requests:
-            cpu: "10m"
-            memory: "1024Mi"
+            cpu: 25m
+            memory: 1024Mi
           limits:
-            cpu: "150m"
-            memory: "3500Mi"
+            cpu: 150m
+            memory: 3500Mi
         ports:
           - containerPort: 3310
         # non-secret env vars
@@ -49,9 +49,8 @@ spec:
                 key: sentry_dsn
         readinessProbe:
           exec:
-            command:
-              - /readiness_probe.sh
-          initialDelaySeconds: 120
+            command: ["./clamd.sh", "probe"]
+          initialDelaySeconds: 90
           periodSeconds: 15
           successThreshold: 1
           timeoutSeconds: 3

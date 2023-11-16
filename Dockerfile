@@ -9,9 +9,6 @@ RUN mkdir /var/run/clamav /run/lock && \
     chown -R clamav:clamav /var/run/clamav /run/lock /var/lock && \
     chmod -R 750 /var/run/clamav /run/lock /var/lock
 
-RUN echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
-    echo "LogClean yes" >> /etc/clamav/clamd.conf
-
 ADD clamd.sh /
 
 # volume provision

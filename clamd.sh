@@ -5,13 +5,6 @@ ACTION=$1
 # This is used in the kubernetes deployment readinessProbe
 probe_function(){
   clamdscan "${0}"
-
-  if [ $? -eq 0 ]; then
-    echo 'Clamdscan probe OK'
-  else
-    echo 'Clamdscan probe unsuccessful'
-    exit 1
-  fi
 }
 
 

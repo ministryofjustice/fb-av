@@ -9,7 +9,7 @@ RUN mkdir /var/run/clamav /run/lock && \
     chown -R clamav:clamav /var/run/clamav /run/lock /var/lock && \
     chmod -R 750 /var/run/clamav /run/lock /var/lock
 
-ADD clamd.sh /
+RUN echo "LogClean yes" >> /etc/clamav/clamd.conf
 
 # volume provision
 VOLUME ["/var/lib/clamav"]

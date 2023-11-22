@@ -208,12 +208,18 @@ workflows:
             # - acceptance_tests
             - deploy_to_test
             - deploy_to_saas_test
+          filters:
+            branches:
+              only: master
       - confirm_live_deploy:
           type: approval
           requires:
             # - acceptance_tests
             - deploy_to_test
             - deploy_to_saas_test
+          filters:
+            branches:
+              only: master
       - deploy_to_live:
           context: *context
           requires:

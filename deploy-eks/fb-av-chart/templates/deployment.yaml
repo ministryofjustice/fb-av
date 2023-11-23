@@ -36,11 +36,16 @@ spec:
             cpu: 150m
             memory: 3500Mi
         ports:
-          - containerPort: 3310
+          - name: clamav-port
+            containerPort: 3310
+        startupProbe:
+          tcpSocket:
+            port: clamav-port
+          failureThreshold: 30
+          periodSeconds: 15
         readinessProbe:
           tcpSocket:
-            port: 3310
-          initialDelaySeconds: 180
+            port: clamav-port
           periodSeconds: 5
         lifecycle:
           preStop:

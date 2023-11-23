@@ -23,6 +23,7 @@ spec:
         tier: "frontend"
     spec:
       serviceAccountName: "formbuilder-av-{{ .Values.environmentName }}"
+      terminationGracePeriodSeconds: 90
       containers:
       - name: "fb-av-{{ .Values.environmentName }}"
         image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-av:{{ .Values.circleSha1 }}"
@@ -36,6 +37,15 @@ spec:
             memory: 3500Mi
         ports:
           - containerPort: 3310
+        readinessProbe:
+          tcpSocket:
+            port: 3310
+          initialDelaySeconds: 180
+          periodSeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "killall -SIGTERM clamd; while [ -S /tmp/clamd.sock ]; do sleep 1; done"]
         # non-secret env vars
         # defined in config_map.yaml
         envFrom:
@@ -47,10 +57,3 @@ spec:
               secretKeyRef:
                 name: fb-av-secrets-{{ .Values.environmentName }}
                 key: sentry_dsn
-        readinessProbe:
-          exec:
-            command: ["clamdscan", "--ping", "1"]
-          initialDelaySeconds: 180
-          periodSeconds: 15
-          successThreshold: 1
-          timeoutSeconds: 3

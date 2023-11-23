@@ -183,6 +183,7 @@ workflows:
             branches:
               only:
                 - master
+                - lifecycle
           requires:
             - login-to-aws
       - deploy_to_test:

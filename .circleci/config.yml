@@ -6,7 +6,7 @@ orbs:
 jobs:
   login-to-aws:
     docker: &docker_image
-      - image: 'cimg/ruby:3.1.3-node'
+      - image: 'cimg/base:current'
     steps:
       - checkout
       - aws-cli/setup:
@@ -81,7 +81,7 @@ jobs:
           command: './deploy-scripts/bin/deploy-eks'
       - slack/status: &slack_status
           fail_only: true
-          only_for_branches: master
+          only_for_branches: main
           failure_message: ":facepalm:  Failed job $CIRCLE_JOB  :homer-disappear:"
           include_job_number_field: false
   deploy_to_saas_test:
@@ -137,7 +137,7 @@ jobs:
             K8S_NAMESPACE: formbuilder-platform-live-production
           command: './deploy-scripts/bin/deploy-eks'
       - slack/status:
-          only_for_branches: master
+          only_for_branches: main
           success_message: ":rocket:  Successfully deployed to Live  :guitar:"
           failure_message: ":alert:  Failed to deploy to Live  :try_not_to_cry:"
           include_job_number_field: false
@@ -182,7 +182,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
           requires:
             - login-to-aws
       - deploy_to_test:
@@ -200,7 +200,7 @@ workflows:
       #     filters:
       #       branches:
       #         only:
-      #           - master
+      #           - main
       - slack/approval-notification:
           message: ":portalorangeparrot:  Deployment to Live pending approval  :portalblueparrot:"
           include_job_number_field: false
@@ -210,7 +210,7 @@ workflows:
             - deploy_to_saas_test
           filters:
             branches:
-              only: master
+              only: main
       - confirm_live_deploy:
           type: approval
           requires:
@@ -219,7 +219,7 @@ workflows:
             - deploy_to_saas_test
           filters:
             branches:
-              only: master
+              only: main
       - deploy_to_live:
           context: *context
           requires:

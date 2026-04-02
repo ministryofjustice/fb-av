@@ -211,24 +211,24 @@ workflows:
           filters:
             branches:
               only: main
-      - confirm_live_deploy:
-          type: approval
-          requires:
-            # - acceptance_tests
-            - deploy_to_test
-            - deploy_to_saas_test
-          filters:
-            branches:
-              only: main
-      - deploy_to_live:
-          context: *context
-          requires:
-            - confirm_live_deploy
-      - deploy_to_saas_live:
-          context: *context
-          requires:
-            - confirm_live_deploy
-      - smoke_tests:
-          context: *context
-          requires:
-            - deploy_to_live
+      # - confirm_live_deploy:
+      #     type: approval
+      #     requires:
+      #       # - acceptance_tests
+      #       - deploy_to_test
+      #       - deploy_to_saas_test
+      #     filters:
+      #       branches:
+      #         only: main
+      # - deploy_to_live:
+      #     context: *context
+      #     requires:
+      #       - confirm_live_deploy
+      # - deploy_to_saas_live:
+      #     context: *context
+      #     requires:
+      #       - confirm_live_deploy
+      # - smoke_tests:
+      #     context: *context
+      #     requires:
+      #       - deploy_to_live

@@ -3,13 +3,11 @@
 #
 # Do not use docker-compose in production environments.
 #
-version: '3'
-
-volumes:
-  clamav-signatures:
+version: "3"
 
 services:
   clamav:
+    user: clamav
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -17,3 +15,6 @@ services:
       - "3310:3310"
     volumes:
       - clamav-signatures:/var/lib/clamav
+
+volumes:
+  clamav-signatures:

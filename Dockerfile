@@ -1,13 +1,12 @@
-FROM clamav/clamav:stable AS base
+FROM clamav/clamav-debian:stable AS base
 
 USER root
 
 # permission juggling
-RUN chown clamav:clamav /var/lib/clamav
-
-RUN mkdir /var/run/clamav /run/lock && \
+RUN chown clamav:clamav /var/lib/clamav && \
+    mkdir -p /var/run/clamav /run/lock && \
     chown -R clamav:clamav /var/run/clamav /run/lock /var/lock && \
-    chmod -R 750 /var/run/clamav /run/lock /var/lock
+    chmod -R 750 /var/run/clamav /run/lock /var/lock /var/lib/clamav
 
 RUN echo "LogClean yes" >> /etc/clamav/clamd.conf
 

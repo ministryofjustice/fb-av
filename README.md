@@ -11,7 +11,7 @@ updating the virus signatures. `clamd` itself is listening on exposed port `3310
 docker compose up
 ```
 
-### Test locally
+## Test locally
 ```bash
 bash test-av.sh
 ```

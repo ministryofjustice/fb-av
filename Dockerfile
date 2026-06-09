@@ -16,4 +16,4 @@ VOLUME ["/var/lib/clamav"]
 # port provision
 EXPOSE 3310
 
-USER 100
+USER clamav

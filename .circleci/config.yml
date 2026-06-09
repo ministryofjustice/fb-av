@@ -41,6 +41,12 @@ jobs:
       - add_ssh_keys: &ssh_keys
           fingerprints:
             - db:58:12:22:b9:f9:7d:b3:97:71:c2:a4:a8:1e:a1:95
+            - f0:98:59:b2:c6:1d:d9:83:17:32:43:81:68:a7:e3:6a
+      - run:
+          name: Add GitHub to known hosts
+          command: |
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: &base_environment_variables
           name: Setup base environment variable
           command: |

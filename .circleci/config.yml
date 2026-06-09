@@ -6,7 +6,7 @@ orbs:
 jobs:
   login-to-aws:
     docker: &docker_image
-      - image: 'cimg/base:current'
+      - image: "cimg/base:current"
     steps:
       - checkout
       - aws-cli/setup:
@@ -48,12 +48,12 @@ jobs:
             echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_db581222b9f97db39771c2a4a81ea195" >> $BASH_ENV
       - run: &deploy_scripts
           name: cloning deploy scripts
-          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+          command: "git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts"
       - run:
           name: build and push docker images
           environment:
             ENVIRONMENT_NAME: test
-          command: './deploy-scripts/bin/build'
+          command: "./deploy-scripts/bin/build"
   deploy_to_test:
     working_directory: ~/circle/git/fb-av
     docker: *ecr_image
@@ -70,7 +70,7 @@ jobs:
             PLATFORM_ENV: test
             DEPLOYMENT_ENV: dev
             K8S_NAMESPACE: formbuilder-platform-test-dev
-          command: './deploy-scripts/bin/deploy-eks'
+          command: "./deploy-scripts/bin/deploy-eks"
       - run:
           name: deploy to test production in EKS
           environment:
@@ -78,7 +78,7 @@ jobs:
             PLATFORM_ENV: test
             DEPLOYMENT_ENV: production
             K8S_NAMESPACE: formbuilder-platform-test-production
-          command: './deploy-scripts/bin/deploy-eks'
+          command: "./deploy-scripts/bin/deploy-eks"
       - slack/status: &slack_status
           fail_only: true
           only_for_branches: main
@@ -99,7 +99,7 @@ jobs:
             APPLICATION_NAME: fb-av
             PLATFORM_ENV: test
             K8S_NAMESPACE: formbuilder-saas-test
-          command: './deploy-scripts/bin/deploy-eks'
+          command: "./deploy-scripts/bin/deploy-eks"
       - slack/status: *slack_status
   # acceptance_tests:
   #   docker: *ecr_image
@@ -127,7 +127,7 @@ jobs:
             PLATFORM_ENV: live
             DEPLOYMENT_ENV: dev
             K8S_NAMESPACE: formbuilder-platform-live-dev
-          command: './deploy-scripts/bin/deploy-eks'
+          command: "./deploy-scripts/bin/deploy-eks"
       - run:
           name: deploy to live production in EKS
           environment:
@@ -135,7 +135,7 @@ jobs:
             PLATFORM_ENV: live
             DEPLOYMENT_ENV: production
             K8S_NAMESPACE: formbuilder-platform-live-production
-          command: './deploy-scripts/bin/deploy-eks'
+          command: "./deploy-scripts/bin/deploy-eks"
       - slack/status:
           only_for_branches: main
           success_message: ":rocket:  Successfully deployed to Live  :guitar:"
@@ -156,7 +156,7 @@ jobs:
             APPLICATION_NAME: fb-av
             PLATFORM_ENV: live
             K8S_NAMESPACE: formbuilder-saas-live
-          command: './deploy-scripts/bin/deploy-eks'
+          command: "./deploy-scripts/bin/deploy-eks"
       - slack/status: *slack_status
   smoke_tests:
     docker: *ecr_image
@@ -166,7 +166,7 @@ jobs:
       - run: *deploy_scripts
       - run:
           name: Run smoke tests
-          command: './deploy-scripts/bin/smoke_tests'
+          command: "./deploy-scripts/bin/smoke_tests"
       - slack/status: *slack_status
 
 workflows:
@@ -220,15 +220,15 @@ workflows:
           filters:
             branches:
               only: main
-      - deploy_to_live:
-          context: *context
-          requires:
-            - confirm_live_deploy
-      - deploy_to_saas_live:
-          context: *context
-          requires:
-            - confirm_live_deploy
-      - smoke_tests:
-          context: *context
-          requires:
-            - deploy_to_live
+      # - deploy_to_live:
+      #     context: *context
+      #     requires:
+      #       - confirm_live_deploy
+      # - deploy_to_saas_live:
+      #     context: *context
+      #     requires:
+      #       - confirm_live_deploy
+      # - smoke_tests:
+      #     context: *context
+      #     requires:
+      #       - deploy_to_live

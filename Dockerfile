@@ -15,7 +15,7 @@ VOLUME ["/var/lib/clamav"]
 # port provision
 EXPOSE 3310
 
-USER clamav
+USER 100
 
 # start clamd and freshclam as a non-root user
 ENTRYPOINT ["/init-unprivileged"]

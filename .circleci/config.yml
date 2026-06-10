@@ -98,7 +98,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - add_ssh_keys: *ssh_keys
-      - run: *base_environment_variables
+      # - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
           name: deploy to saas test in EKS
@@ -192,10 +192,10 @@ workflows:
                 - fix-deployment
           requires:
             - login-to-aws
-      - deploy_to_test:
-          context: *context
-          requires:
-            - build_image
+      # - deploy_to_test:
+      #     context: *context
+      #     requires:
+      #       - build_image
       - deploy_to_saas_test:
           context: *context
           requires:
@@ -208,25 +208,25 @@ workflows:
       #       branches:
       #         only:
       #           - main
-      - slack/approval-notification:
-          message: ":portalorangeparrot:  Deployment to Live pending approval  :portalblueparrot:"
-          include_job_number_field: false
-          requires:
-            # - acceptance_tests
-            - deploy_to_test
-            - deploy_to_saas_test
-          filters:
-            branches:
-              only: main
-      - confirm_live_deploy:
-          type: approval
-          requires:
-            # - acceptance_tests
-            - deploy_to_test
-            - deploy_to_saas_test
-          filters:
-            branches:
-              only: main
+      # - slack/approval-notification:
+      #     message: ":portalorangeparrot:  Deployment to Live pending approval  :portalblueparrot:"
+      #     include_job_number_field: false
+      #     requires:
+      #       # - acceptance_tests
+      #       - deploy_to_test
+      #       - deploy_to_saas_test
+      #     filters:
+      #       branches:
+      #         only: main
+      # - confirm_live_deploy:
+      #     type: approval
+      #     requires:
+      #       # - acceptance_tests
+      #       - deploy_to_test
+      #       - deploy_to_saas_test
+      #     filters:
+      #       branches:
+      #         only: main
       # - deploy_to_live:
       #     context: *context
       #     requires:

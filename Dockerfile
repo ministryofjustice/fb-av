@@ -5,7 +5,7 @@ USER root
 # permission juggling
 RUN chown clamav:clamav /var/lib/clamav
 
-RUN mkdir /var/run/clamav /run/lock && \
+RUN mkdir -p /var/run/clamav /run/lock && \
     chown -R clamav:clamav /var/run/clamav /run/lock /var/lock && \
     chmod -R 750 /var/run/clamav /run/lock /var/lock
 

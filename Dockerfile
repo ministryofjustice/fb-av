@@ -1,11 +1,13 @@
-FROM clamav/clamav-debian:stable AS base
+FROM clamav/clamav:stable AS base
 
 USER root
 
 # permission juggling
-RUN mkdir -p /var/run/clamav /run/lock && \
-    chown -R clamav:clamav /var/run/clamav /run/lock /var/lib/clamav /var/lock /var/log && \
-    chmod -R 750 /var/run/clamav /run/lock /var/lib/clamav /var/lock  /var/log
+RUN chown clamav:clamav /var/lib/clamav
+
+RUN mkdir /var/run/clamav /run/lock && \
+    chown -R clamav:clamav /var/run/clamav /run/lock /var/lock && \
+    chmod -R 750 /var/run/clamav /run/lock /var/lock
 
 RUN echo "LogClean yes" >> /etc/clamav/clamd.conf
 
@@ -16,6 +18,3 @@ VOLUME ["/var/lib/clamav"]
 EXPOSE 3310
 
 USER 100
-
-# start clamd and freshclam as a non-root user
-ENTRYPOINT ["/init-unprivileged"]

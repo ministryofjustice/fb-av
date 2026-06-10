@@ -98,7 +98,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - add_ssh_keys: *ssh_keys
-      # - run: *base_environment_variables
+      - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
           name: deploy to saas test in EKS
